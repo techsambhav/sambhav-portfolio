@@ -55,6 +55,9 @@ export default function AdminDashboard() {
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null)
   const [uploadingHeroBg, setUploadingHeroBg] = useState(false)
   const [currentHeroBg, setCurrentHeroBg] = useState<string | null>(null)
+  const [heroBgType, setHeroBgType] = useState<'image' | 'video'>('image')
+  const [showHeroBg, setShowHeroBg] = useState(false)
+  const [updatingShowHeroBg, setUpdatingShowHeroBg] = useState(false)
   const heroBgFileInputRef = useRef<HTMLInputElement>(null)
 
   // Projects Tab states
@@ -209,11 +212,70 @@ export default function AdminDashboard() {
         console.warn('Failed to fetch hero background:', error.message)
       } else if (data) {
         setCurrentHeroBg(data.src)
+        setHeroBgType(data.type || 'image')
       } else {
         setCurrentHeroBg(null)
+        setHeroBgType('image')
+      }
+
+      // Fetch show/hide setting
+      const { data: settingsData, error: settingsError } = await supabase
+        .from('media')
+        .select('*')
+        .eq('category', 'HERO_BG_SETTINGS')
+        .maybeSingle()
+
+      if (settingsError) {
+        console.warn('Failed to fetch hero background settings:', settingsError.message)
+      } else if (settingsData) {
+        setShowHeroBg(settingsData.src === 'true')
+      } else {
+        setShowHeroBg(false)
       }
     } catch (err: any) {
       console.warn('Error fetching hero background:', err.message)
+    }
+  }
+
+  const handleToggleShowHeroBg = async (checked: boolean) => {
+    setUpdatingShowHeroBg(true)
+    const toastId = toast.loading('Saving background setting...')
+    try {
+      const { data: existing, error: fetchError } = await supabase
+        .from('media')
+        .select('*')
+        .eq('category', 'HERO_BG_SETTINGS')
+        .maybeSingle()
+
+      if (fetchError) throw fetchError
+
+      if (existing) {
+        const { error: dbError } = await supabase
+          .from('media')
+          .update({
+            src: checked ? 'true' : 'false',
+            title: 'show_background',
+          })
+          .eq('id', existing.id)
+
+        if (dbError) throw dbError
+      } else {
+        const { error: dbError } = await supabase.from('media').insert({
+          title: 'show_background',
+          category: 'HERO_BG_SETTINGS',
+          type: 'image',
+          src: checked ? 'true' : 'false',
+        })
+
+        if (dbError) throw dbError
+      }
+
+      setShowHeroBg(checked)
+      toast.success('Setting updated successfully!', { id: toastId })
+    } catch (err: any) {
+      toast.error('Failed to update setting: ' + err.message, { id: toastId })
+    } finally {
+      setUpdatingShowHeroBg(false)
     }
   }
 
@@ -556,7 +618,7 @@ export default function AdminDashboard() {
   const handleUploadHeroBg = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!heroBgFile) {
-      toast.error('Please select an image file to upload')
+      toast.error('Please select an image or video file to upload')
       return
     }
 
@@ -589,6 +651,9 @@ export default function AdminDashboard() {
 
       if (fetchError) throw fetchError
 
+      const isVideo = heroBgFile.type.startsWith('video/')
+      const mediaType = isVideo ? 'video' : 'image'
+
       if (existing) {
         const oldFilePath = getPathFromPublicUrl(existing.src)
         if (oldFilePath) {
@@ -600,6 +665,7 @@ export default function AdminDashboard() {
           .update({
             src: publicUrl,
             title: 'Hero Background',
+            type: mediaType
           })
           .eq('id', existing.id)
 
@@ -608,7 +674,7 @@ export default function AdminDashboard() {
         const { error: dbError } = await supabase.from('media').insert({
           title: 'Hero Background',
           category: 'HERO_BG',
-          type: 'image',
+          type: mediaType,
           src: publicUrl,
         })
 
@@ -974,22 +1040,52 @@ export default function AdminDashboard() {
                   Hero Background
                 </CardTitle>
                 <CardDescription className="text-[#7A7A7A] text-[13px] font-sans">
-                  Upload a custom backdrop image to display behind the main Hero header statement in grayscale.
+                  Upload a custom backdrop image or video to display behind the main Hero header statement in grayscale.
                 </CardDescription>
               </CardHeader>
 
               <form onSubmit={handleUploadHeroBg} className="space-y-6">
+                {/* Background Visibility Toggle */}
+                <div className="flex items-center justify-between p-3 bg-[#111111] border border-[#2A2A2A]">
+                  <div className="pr-4">
+                    <span className="text-[12px] font-bold text-white block uppercase tracking-[0.05em]">
+                      Display Custom Background
+                    </span>
+                    <span className="text-[10px] text-[#7A7A7A] block">
+                      Toggle background on/off on the live Hero section.
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={showHeroBg}
+                    disabled={updatingShowHeroBg}
+                    onChange={(e) => handleToggleShowHeroBg(e.target.checked)}
+                    className="w-5 h-5 rounded accent-[#E60012] bg-black border-[#2A2A2A] cursor-crosshair"
+                  />
+                </div>
+
                 {currentHeroBg && (
                   <div className="space-y-2">
                     <label className="text-[11px] tracking-[0.1em] text-[#7A7A7A] uppercase block">
-                      Current Backdrop Preview
+                      Current Backdrop Preview ({heroBgType.toUpperCase()})
                     </label>
                     <div className="relative group aspect-video bg-[#111111] border border-[#2A2A2A] overflow-hidden flex items-center justify-center">
-                      <img
-                        src={currentHeroBg}
-                        alt="Current Hero Background"
-                        className="w-full h-full object-cover filter grayscale opacity-75"
-                      />
+                      {heroBgType === 'video' ? (
+                        <video
+                          src={currentHeroBg}
+                          className="w-full h-full object-cover filter grayscale opacity-75"
+                          muted
+                          loop
+                          autoPlay
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          src={currentHeroBg}
+                          alt="Current Hero Background"
+                          className="w-full h-full object-cover filter grayscale opacity-75"
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={handleDeleteHeroBg}
@@ -1004,14 +1100,14 @@ export default function AdminDashboard() {
 
                 <div className="space-y-2">
                   <label className="text-[11px] tracking-[0.1em] text-[#7A7A7A] uppercase block">
-                    {currentHeroBg ? 'Replace Backdrop Image' : 'Select Backdrop Image'}
+                    {currentHeroBg ? 'Replace Backdrop Image/Video' : 'Select Backdrop Image/Video'}
                   </label>
                   <input
                     ref={heroBgFileInputRef}
                     type="file"
                     required
                     disabled={uploadingHeroBg}
-                    accept="image/*"
+                    accept="image/*,video/*"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
                         setHeroBgFile(e.target.files[0])

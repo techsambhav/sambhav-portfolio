@@ -24,6 +24,24 @@ const defaultCards: CardItem[] = [
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
   
+  // Custom Background States
+  const [heroBg, setHeroBg] = useState<{ src: string; type: 'image' | 'video' } | null>(() => {
+    if (typeof window !== 'undefined') {
+      const cachedSrc = localStorage.getItem('cached_hero_bg_src')
+      const cachedType = localStorage.getItem('cached_hero_bg_type') as 'image' | 'video' | null
+      if (cachedSrc && cachedType) {
+        return { src: cachedSrc, type: cachedType }
+      }
+    }
+    return null
+  })
+  const [showHeroBg, setShowHeroBg] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cached_hero_show_bg') === 'true'
+    }
+    return false
+  })
+
   // Dynamic media uploads from Supabase (Category = HERO_CAROUSEL)
   const [cards, setCards] = useState<CardItem[]>(() => {
     const cached = typeof window !== 'undefined' ? localStorage.getItem('cached_hero_cards') : null
@@ -92,7 +110,50 @@ export default function Hero() {
         console.warn('Could not load hero media from Supabase:', err)
       }
     }
+
+    async function loadHeroBgAndSettings() {
+      try {
+        const { data: bgData, error: bgError } = await supabase
+          .from('media')
+          .select('*')
+          .eq('category', 'HERO_BG')
+          .maybeSingle()
+
+        if (bgError) throw bgError
+
+        if (bgData) {
+          setHeroBg({ src: bgData.src, type: bgData.type || 'image' })
+          localStorage.setItem('cached_hero_bg_src', bgData.src)
+          localStorage.setItem('cached_hero_bg_type', bgData.type || 'image')
+        } else {
+          setHeroBg(null)
+          localStorage.removeItem('cached_hero_bg_src')
+          localStorage.removeItem('cached_hero_bg_type')
+        }
+
+        const { data: settingsData, error: settingsError } = await supabase
+          .from('media')
+          .select('*')
+          .eq('category', 'HERO_BG_SETTINGS')
+          .maybeSingle()
+
+        if (settingsError) throw settingsError
+
+        if (settingsData) {
+          const isShow = settingsData.src === 'true'
+          setShowHeroBg(isShow)
+          localStorage.setItem('cached_hero_show_bg', isShow ? 'true' : 'false')
+        } else {
+          setShowHeroBg(false)
+          localStorage.setItem('cached_hero_show_bg', 'false')
+        }
+      } catch (err) {
+        console.warn('Could not load hero background configuration from Supabase:', err)
+      }
+    }
+
     loadHeroMedia()
+    loadHeroBgAndSettings()
   }, [])
 
   useEffect(() => {
@@ -254,6 +315,28 @@ export default function Hero() {
         touchAction: 'pan-y'
       }}
     >
+      {/* Custom background media */}
+      {showHeroBg && heroBg && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {heroBg.type === 'video' ? (
+            <video
+              src={heroBg.src}
+              className="w-full h-full object-cover filter grayscale opacity-20"
+              muted
+              loop
+              autoPlay
+              playsInline
+            />
+          ) : (
+            <img
+              src={heroBg.src}
+              alt="Hero backdrop"
+              className="w-full h-full object-cover filter grayscale opacity-20"
+            />
+          )}
+        </div>
+      )}
+
       {/* Background Grid Lines for Studio Vibe */}
       <div 
         className="absolute inset-0 pointer-events-none opacity-[0.04]"
