@@ -58,7 +58,17 @@ const defaultProjects: ProjectItem[] = [
 ]
 
 export default function Projects() {
-  const [projectList, setProjectList] = useState<ProjectItem[]>(defaultProjects)
+  const [projectList, setProjectList] = useState<ProjectItem[]>(() => {
+    const cached = typeof window !== 'undefined' ? localStorage.getItem('cached_projects') : null
+    if (cached) {
+      try {
+        return JSON.parse(cached)
+      } catch (e) {
+        return defaultProjects
+      }
+    }
+    return defaultProjects
+  })
   const [wheelItems, setWheelItems] = useState<ProjectItem[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -94,6 +104,7 @@ export default function Projects() {
             image_url: item.image_url,
           }))
           setProjectList(dbProjects)
+          localStorage.setItem('cached_projects', JSON.stringify(dbProjects))
         }
       } catch (err) {
         console.warn('Could not load dynamic projects from Supabase, falling back:', err)

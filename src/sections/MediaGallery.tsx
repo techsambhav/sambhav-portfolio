@@ -88,7 +88,17 @@ function Lightbox({ item, onClose }: { item: MediaItem; onClose: () => void }) {
 }
 
 export default function MediaGallery() {
-  const [items, setItems] = useState<MediaItem[]>(defaultItems)
+  const [items, setItems] = useState<MediaItem[]>(() => {
+    const cached = typeof window !== 'undefined' ? localStorage.getItem('cached_media_items') : null
+    if (cached) {
+      try {
+        return JSON.parse(cached)
+      } catch (e) {
+        return defaultItems
+      }
+    }
+    return defaultItems
+  })
   const [lightboxItem, setLightboxItem] = useState<MediaItem | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const navigate = useNavigate()
@@ -131,6 +141,7 @@ export default function MediaGallery() {
             title: item.title,
           }))
           setItems(dbItems)
+          localStorage.setItem('cached_media_items', JSON.stringify(dbItems))
         }
       } catch (err) {
         console.warn('Could not load Supabase media items, falling back to local:', err)

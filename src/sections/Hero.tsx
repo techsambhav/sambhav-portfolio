@@ -25,7 +25,17 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
   
   // Dynamic media uploads from Supabase (Category = HERO_CAROUSEL)
-  const [cards, setCards] = useState<CardItem[]>(defaultCards)
+  const [cards, setCards] = useState<CardItem[]>(() => {
+    const cached = typeof window !== 'undefined' ? localStorage.getItem('cached_hero_cards') : null
+    if (cached) {
+      try {
+        return JSON.parse(cached)
+      } catch (e) {
+        return defaultCards
+      }
+    }
+    return defaultCards
+  })
 
   // Dragging and Parallax States
   const [rotation, setRotation] = useState(0) // in degrees
@@ -63,6 +73,7 @@ export default function Hero() {
 
           if (dbCards.length === 0) {
             setCards([])
+            localStorage.setItem('cached_hero_cards', JSON.stringify([]))
           } else {
             // Replicate if needed to ensure at least 6 items for circular ring
             let displayCards = [...dbCards]
@@ -72,6 +83,7 @@ export default function Hero() {
               }
             }
             setCards(displayCards)
+            localStorage.setItem('cached_hero_cards', JSON.stringify(displayCards))
           }
         }
       } catch (err) {
