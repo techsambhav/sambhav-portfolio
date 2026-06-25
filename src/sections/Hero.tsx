@@ -41,7 +41,9 @@ export default function Hero() {
   const [rotation, setRotation] = useState(0) // in degrees
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
+  const [dragStartY, setDragStartY] = useState(0)
   const [baseRotation, setBaseRotation] = useState(0)
+  const [isScrolling, setIsScrolling] = useState(false)
   
   // Mouse position for parallax float (range: -0.5 to 0.5)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -141,7 +143,9 @@ export default function Hero() {
     }
 
     setIsDragging(true)
+    setIsScrolling(false)
     setDragStartX(e.clientX)
+    setDragStartY(e.clientY)
     setBaseRotation(rotation)
     if (containerRef.current) {
       containerRef.current.setPointerCapture(e.pointerId)
@@ -150,8 +154,20 @@ export default function Hero() {
   }
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return
+    if (!isDragging || isScrolling) return
     const deltaX = e.clientX - dragStartX
+    const deltaY = e.clientY - dragStartY
+
+    // Differentiate scroll gesture (vertical swipe) from rotation drag
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
+      setIsScrolling(true)
+      setIsDragging(false)
+      if (containerRef.current) {
+        containerRef.current.releasePointerCapture(e.pointerId)
+      }
+      return
+    }
+
     const sensitivity = width < 768 ? 0.35 : 0.22
     const newRot = baseRotation + deltaX * sensitivity
     
@@ -164,6 +180,7 @@ export default function Hero() {
 
   const handlePointerUp = (e: React.PointerEvent) => {
     setIsDragging(false)
+    setIsScrolling(false)
     if (containerRef.current) {
       containerRef.current.releasePointerCapture(e.pointerId)
     }
@@ -232,7 +249,7 @@ export default function Hero() {
         background: '#D2D2D2',
         padding: 'clamp(95px, 12vh, 120px) clamp(24px, 6vw, 80px) clamp(32px, 6vh, 60px)',
         cursor: isDragging ? 'grabbing' : 'grab',
-        touchAction: 'none'
+        touchAction: 'pan-y'
       }}
     >
       {/* Background Grid Lines for Studio Vibe */}
