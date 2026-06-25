@@ -203,7 +203,7 @@ export default function Hero() {
     // Fine-grained proportional cylinder radius
     let radius = 640
     if (width < 480) {
-      radius = 270
+      radius = 290
     } else if (width < 768) {
       radius = 400
     } else if (width < 1024) {
@@ -213,7 +213,9 @@ export default function Hero() {
     const x = Math.sin(angleRad) * radius
     const z = Math.cos(angleRad) * radius - radius
 
-    const y = x * 0.12 + Math.sin(angleRad * 2.0) * 15
+    const waveFactor = width < 768 ? 0.07 : 0.12
+    const sinFactor = width < 768 ? 8 : 15
+    const y = x * waveFactor + Math.sin(angleRad * 2.0) * sinFactor
     const rotateY = currentAngle
     const rotateZ = currentAngle * 0.06
 
@@ -229,7 +231,7 @@ export default function Hero() {
   // Fine-grained proportional card width sizing
   let cardWidth = 240
   if (width < 480) {
-    cardWidth = 130
+    cardWidth = 115
   } else if (width < 768) {
     cardWidth = 175
   } else if (width < 1024) {
@@ -266,7 +268,7 @@ export default function Hero() {
         <h1 
           className="font-display tracking-tight text-[#1C1C1C] leading-[0.8] mb-1 select-none"
           style={{
-            fontSize: 'clamp(54px, 14vw, 190px)',
+            fontSize: 'clamp(38px, 11vw, 190px)',
             transform: `translate3d(${mousePos.x * -20}px, ${mousePos.y * -10}px, 0)`
           }}
         >
@@ -274,13 +276,13 @@ export default function Hero() {
         </h1>
 
         <div 
-          className="my-3 py-1 flex items-center justify-center pointer-events-auto"
+          className="my-2 sm:my-3 py-1 flex items-center justify-center pointer-events-auto"
           style={{
             transform: `translate3d(${mousePos.x * 10}px, ${mousePos.y * 5}px, 0)`
           }}
         >
           <div 
-            className="text-[10px] sm:text-[12px] font-bold tracking-[0.25em] text-neutral-500 uppercase px-6 py-2 border border-neutral-400"
+            className="text-[9px] sm:text-[12px] font-bold tracking-[0.12em] sm:tracking-[0.25em] text-neutral-500 uppercase px-4 sm:px-6 py-1.5 sm:py-2 border border-neutral-400 max-w-[280px] sm:max-w-none text-center leading-normal"
             style={{
               borderRadius: '20px',
               background: 'rgba(210, 210, 210, 0.4)',
@@ -294,7 +296,7 @@ export default function Hero() {
         <h1 
           className="font-display tracking-tight text-[#1C1C1C] leading-[0.8] mt-1 select-none"
           style={{
-            fontSize: 'clamp(54px, 14vw, 190px)',
+            fontSize: 'clamp(38px, 11vw, 190px)',
             transform: `translate3d(${mousePos.x * -20}px, ${mousePos.y * -10}px, 0)`
           }}
         >
@@ -306,7 +308,8 @@ export default function Hero() {
       <div 
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 ribbon-perspective overflow-hidden"
         style={{
-          marginTop: '6%'
+          marginTop: width < 768 ? '10%' : '6%',
+          transform: width < 768 ? 'translateY(35px)' : 'none'
         }}
       >
         <div 
