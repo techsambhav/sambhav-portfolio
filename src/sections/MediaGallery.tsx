@@ -128,6 +128,7 @@ export default function MediaGallery() {
           .select('*')
           .neq('category', 'HERO_BG')
           .neq('category', 'HERO_CAROUSEL')
+          .neq('category', 'HERO_BG_SETTINGS')
           .order('created_at', { ascending: true })
 
         if (error) throw error

@@ -320,6 +320,7 @@ export default function Hero() {
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           {heroBg.type === 'video' ? (
             <video
+              key={heroBg.src}
               src={heroBg.src}
               className="w-full h-full object-cover filter grayscale opacity-20"
               muted

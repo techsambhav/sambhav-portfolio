@@ -139,6 +139,7 @@ export default function AdminDashboard() {
         .select('*')
         .neq('category', 'HERO_BG')
         .neq('category', 'HERO_CAROUSEL')
+        .neq('category', 'HERO_BG_SETTINGS')
         .order('created_at', { ascending: false })
 
       if (error) {
