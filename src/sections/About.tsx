@@ -14,7 +14,7 @@ const tags = [
 const profileRows = [
   { key: 'ROLE', val: 'Multimedia Head — Sports Committee' },
   { key: 'STARTUP', val: 'Founder — Connect Artist' },
-  { key: 'PROJECTS', val: 'Jain Traders · 1000+ Creatives' },
+  { key: 'PROJECTS', val: 'Jain Traders· 1000+ Creatives' },
   { key: 'INTERNSHIP', val: 'Creative & Social Media — InAmigos' },
   { key: 'COLLEGE', val: 'Bennett University (B.Tech CSE)' },
   { key: 'BRANDS', val: 'Pepsi · Gatorade · Yonex · Nivia' },

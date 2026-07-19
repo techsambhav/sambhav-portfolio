@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { playUISound } from '../lib/sound'
+import { supabase } from '../lib/supabase'
 
 const contactInfo = [
   { key: 'PHONE', val: '+91 7037936440', href: 'tel:+917037936440' },
@@ -14,6 +15,13 @@ const contactInfo = [
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    service: '',
+    message: ''
+  })
   const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -34,12 +42,47 @@ export default function Contact() {
     return () => observer.disconnect()
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     playUISound('click')
+    setLoading(true)
+
+    try {
+      // 1. Save submission to Supabase
+      const { error } = await supabase.from('contact_messages').insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          service: formData.service || 'General Inquiry',
+          message: formData.message,
+          created_at: new Date().toISOString()
+        }
+      ])
+
+      if (error) {
+        console.warn('Supabase insert notice (falling back to direct mail):', error.message)
+      }
+    } catch (err) {
+      console.warn('Error sending to database:', err)
+    }
+
+    // 2. Open Gmail / Mail client prefilled as a direct fallback
+    const subject = encodeURIComponent(`Portfolio Inquiry from ${formData.name} [${formData.service || 'General'}]`)
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail/Phone: ${formData.email}\nService needed: ${formData.service || 'Not specified'}\n\nMessage:\n${formData.message}`
+    )
+    const mailtoUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=working.sambhav24@gmail.com&su=${subject}&body=${body}`
+    window.open(mailtoUrl, '_blank')
+
+    setLoading(false)
     setSent(true)
-    setTimeout(() => setSent(false), 3000)
-    ;(e.target as HTMLFormElement).reset()
+    setFormData({ name: '', email: '', service: '', message: '' })
+    setTimeout(() => setSent(false), 4000)
   }
 
   return (
@@ -128,8 +171,11 @@ export default function Contact() {
               </label>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 required
-                placeholder="John Doe"
+                placeholder="Sambhav Jain"
                 className="w-full bg-transparent text-neutral-800 outline-none transition-colors duration-200 focus:border-b-[#E60012]"
                 style={{
                   border: 'none',
@@ -147,8 +193,11 @@ export default function Contact() {
               </label>
               <input
                 type="text"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 required
-                placeholder="email@example.com"
+                placeholder="working.sambhav24@gmail.com"
                 className="w-full bg-transparent text-neutral-800 outline-none transition-colors duration-200 focus:border-b-[#E60012]"
                 style={{
                   border: 'none',
@@ -165,6 +214,9 @@ export default function Contact() {
                 What do you need?
               </label>
               <select
+                name="service"
+                value={formData.service}
+                onChange={handleChange}
                 className="w-full bg-transparent text-neutral-800 outline-none cursor-crosshair transition-colors duration-200 focus:border-b-[#E60012]"
                 style={{
                   border: 'none',
@@ -175,10 +227,10 @@ export default function Contact() {
                 }}
               >
                 <option value="" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Select...</option>
-                <option value="design" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Graphic Design</option>
-                <option value="video" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Video Editing</option>
-                <option value="brand" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Brand Deal</option>
-                <option value="other" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Other</option>
+                <option value="Graphic Design" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Graphic Design</option>
+                <option value="Video Editing" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Video Editing</option>
+                <option value="Brand Deal" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Brand Deal</option>
+                <option value="Other" style={{ background: '#D9D9D9', color: '#1C1C1C' }}>Other</option>
               </select>
             </div>
 
@@ -187,6 +239,10 @@ export default function Contact() {
                 Message
               </label>
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
                 placeholder="Tell me about the project..."
                 rows={4}
                 className="w-full bg-transparent text-neutral-800 outline-none transition-colors duration-200 focus:border-[#E60012]"
@@ -203,8 +259,9 @@ export default function Contact() {
 
             <button
               type="submit"
+              disabled={loading}
               onMouseEnter={() => playUISound('hover')}
-              className="self-start transition-all duration-300 hover:bg-neutral-800 hover:text-white mt-2 select-none cursor-crosshair font-mono"
+              className="self-start transition-all duration-300 hover:bg-neutral-800 hover:text-white mt-2 select-none cursor-crosshair font-mono disabled:opacity-50"
               style={{
                 background: sent ? 'transparent' : '#1C1C1C',
                 color: sent ? '#E60012' : '#FFFFFF',
@@ -217,7 +274,7 @@ export default function Contact() {
                 border: sent ? '1px solid #E60012' : 'none',
               }}
             >
-              {sent ? '✓ SENT' : 'SEND MESSAGE →'}
+              {loading ? 'SENDING...' : sent ? '✓ SENT' : 'SEND MESSAGE →'}
             </button>
           </form>
         </div>

@@ -13,8 +13,8 @@ export default function AdminLogin() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
         navigate('/admin')
       }
     })
