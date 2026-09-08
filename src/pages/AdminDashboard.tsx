@@ -755,9 +755,30 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-6">
           <a
             href="/"
-            className="font-display text-[22px] tracking-[0.06em] text-white no-underline select-none"
+            className="no-underline flex items-center gap-2 select-none"
           >
-            SAMBHAV<span style={{ color: '#E60012' }}>®</span>
+            <span className="font-display text-[22px] tracking-[0.06em] text-white">SAMBHAV</span>
+            <span
+              style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: '#FFFFFF',
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                padding: '2px 7px',
+                borderRadius: '6px',
+                lineHeight: 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#E60012', display: 'inline-block' }}></span>
+              STUDIO
+            </span>
           </a>
           <span className="text-[11px] tracking-[0.15em] text-[#7A7A7A] hidden sm:inline">
             / ADMIN PANEL

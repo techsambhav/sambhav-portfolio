@@ -9,11 +9,31 @@ export default function Footer() {
         transition: 'background-color 0.4s ease'
       }}
     >
-      <div
-        className="font-display"
-        style={{ fontSize: '18px', letterSpacing: '0.04em', color: 'var(--text-dark)' }}
-      >
-        SAMBHAV JAIN<span style={{ color: '#E60012' }}>®</span>
+      <div className="flex items-center gap-2 select-none">
+        <span className="font-display text-[18px] tracking-[0.04em]" style={{ color: 'var(--text-dark)' }}>
+          SAMBHAV
+        </span>
+        <span
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '9px',
+            fontWeight: 700,
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#E60012',
+            background: 'rgba(230,0,18,0.08)',
+            border: '1px solid rgba(230,0,18,0.25)',
+            padding: '2px 6px',
+            borderRadius: '5px',
+            lineHeight: 1,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+          }}
+        >
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#E60012', display: 'inline-block' }}></span>
+          STUDIO
+        </span>
       </div>
       <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', color: '#666666', textAlign: 'center' }}>
         © 2026 · MULTIMEDIA HEAD · BENNETT UNIVERSITY · MADE WITH RAW INTENT

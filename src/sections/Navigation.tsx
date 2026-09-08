@@ -56,12 +56,33 @@ export default function Navigation() {
           href="#home"
           onClick={(e) => handleNavClick(e, '#home')}
           onMouseEnter={() => playUISound('hover')}
-          className="font-display text-[22px] tracking-[0.06em] no-underline flex items-center gap-0.5 select-none transition-colors duration-300"
+          className="no-underline flex items-center gap-2 select-none transition-colors duration-300"
           style={{ 
             color: menuOpen ? '#FFFFFF' : '#1C1C1C' 
           }}
         >
-          SAMBHAV<span style={{ color: '#E60012' }}>®</span>
+          <span className="font-display text-[22px] tracking-[0.06em]">SAMBHAV</span>
+          <span
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: menuOpen ? '#FFFFFF' : '#E60012',
+              background: menuOpen ? 'rgba(255,255,255,0.15)' : 'rgba(230,0,18,0.08)',
+              border: menuOpen ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(230,0,18,0.25)',
+              padding: '2px 7px',
+              borderRadius: '6px',
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}
+          >
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#E60012', display: 'inline-block' }}></span>
+            STUDIO
+          </span>
         </a>
 
         {/* Action Controls */}
