@@ -14,6 +14,13 @@ interface ProjectItem {
 
 const defaultProjects: ProjectItem[] = [
   {
+    initials: 'SR',
+    cat: 'Meta Ads · Social Media Management',
+    name: 'Shubham Rajput (@mortgage.broker.ca)',
+    desc: 'Full Instagram & Facebook management, Meta Ads campaign execution, video editing, and graphic design for Brampton, ON mortgage broker.',
+    featured: true,
+  },
+  {
     initials: 'SB',
     cat: 'Sports Branding · Campaign',
     name: 'Sportikon BU — Brand Identity',

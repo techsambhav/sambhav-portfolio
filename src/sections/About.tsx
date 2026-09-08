@@ -4,17 +4,22 @@ import { playUISound } from '../lib/sound'
 const tags = [
   { label: 'Bennett University', hot: true },
   { label: 'Sports Committee', hot: true },
+  { label: 'Meta Ads', hot: true },
+  { label: 'Canada Clients', hot: true },
   { label: 'Connect Artist', hot: true },
+  { label: '@mortgage.broker.ca', hot: false },
+  { label: 'Shubham Rajput', hot: false },
   { label: 'Jain Traders', hot: false },
   { label: 'InAmigos', hot: false },
   { label: 'Full Stack Dev', hot: false },
-  { label: 'Multimedia Head', hot: false },
 ]
 
 const profileRows = [
   { key: 'ROLE', val: 'Multimedia Head — Sports Committee' },
   { key: 'STARTUP', val: 'Founder — Connect Artist' },
-  { key: 'PROJECTS', val: 'Jain Traders· 1000+ Creatives' },
+  { key: 'CLIENTS', val: 'Shubham Rajput (@mortgage.broker.ca) & Yuvraj' },
+  { key: 'META ADS', val: 'Social Media Marketing & Ad Campaigns' },
+  { key: 'PROJECTS', val: 'Jain Traders · 1000+ Creatives' },
   { key: 'INTERNSHIP', val: 'Creative & Social Media — InAmigos' },
   { key: 'COLLEGE', val: 'Bennett University (B.Tech CSE)' },
   { key: 'BRANDS', val: 'Pepsi · Gatorade · Yonex · Nivia' },
@@ -96,7 +101,7 @@ export default function About() {
             </p>
 
             <p style={{ fontSize: '14.5px', lineHeight: 1.75, color: '#555555' }}>
-              Further expanding my experience, I have contributed to creative and social media initiatives through collaborations and internships, including my time at <strong style={{ color: 'var(--text-dark)', fontWeight: 600 }}>InAmigos</strong>.
+              Further expanding my experience, I manage social media strategy, <strong style={{ color: 'var(--text-dark)', fontWeight: 600 }}>Meta Ads</strong>, video editing, graphic design, and marketing campaigns for international clients in <strong style={{ color: 'var(--text-dark)', fontWeight: 600 }}>Canada</strong> — including complete Instagram &amp; Facebook management and Meta Ads for <strong style={{ color: '#E60012', fontWeight: 600 }}>Shubham Rajput (<a href="https://instagram.com/mortgage.broker.ca" target="_blank" rel="noreferrer" style={{ color: '#E60012', textDecoration: 'underline' }}>@mortgage.broker.ca</a>)</strong> (Mortgage Broker, Brampton, ON) and dedicated video editing for <strong style={{ color: 'var(--text-dark)', fontWeight: 600 }}>Yuvraj</strong>. I have also contributed to creative initiatives through internships such as <strong style={{ color: 'var(--text-dark)', fontWeight: 600 }}>InAmigos</strong>.
             </p>
 
             <p style={{ fontSize: '14.5px', lineHeight: 1.75, color: '#555555' }}>

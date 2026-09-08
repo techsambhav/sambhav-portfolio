@@ -4,7 +4,7 @@ import { playUISound } from '../lib/sound'
 const skills = [
   { num: '01', name: 'Graphic Design', tools: 'Photoshop · Illustrator · Canva\nBanners · Merch · ID Cards · Flags · Posters', width: 92 },
   { num: '02', name: 'Video Editing', tools: 'Premiere Pro · CapCut · After Effects\nReels · Highlights · Event Films', width: 88 },
-  { num: '03', name: 'Sports Marketing', tools: 'Campaign Strategy · Social Media\nInstagram · Content Planning · Reels', width: 85 },
+  { num: '03', name: 'Meta Ads & Marketing', tools: 'Meta Ads Manager · Campaign Strategy\nSocial Media Management · Instagram · SMM', width: 88 },
   { num: '04', name: 'Vendor & Sponsorship', tools: 'Brand Outreach · Negotiation\nPepsi · Gatorade · Yonex · Nivia · Fast&Up', width: 80 },
   { num: '05', name: 'Content Direction', tools: 'Visual Storytelling · Shot Planning\nLive Event Coverage · Brand Voice', width: 83 },
   { num: '06', name: 'Team Leadership', tools: 'Media Team Management\nDelegation · Workflow · Deadlines', width: 78 },

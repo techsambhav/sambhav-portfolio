@@ -3,6 +3,17 @@ import { playUISound } from '../lib/sound'
 
 const experiences = [
   {
+    date: '2025 - Present',
+    org: 'Canada Clients\nShubham Rajput & Yuvraj',
+    loc: 'Brampton, ON, Canada (Remote)',
+    title: 'Social Media & Meta Ads Manager / Video Editor',
+    bullets: [
+      '<strong>Shubham Rajput (<a href="https://instagram.com/mortgage.broker.ca" target="_blank" rel="noopener noreferrer" style="color: #E60012; text-decoration: underline;">@mortgage.broker.ca</a>):</strong> Managing complete Instagram & Facebook presence, Meta Ads campaign strategy & execution, video editing, graphic design, and SMM',
+      '<strong>Yuvraj:</strong> Delivering professional video editing and visual content creation',
+      'Executing targeted <strong>Meta Ads campaigns</strong> for high lead conversion, brand positioning, and client acquisition in Brampton & Ontario',
+    ],
+  },
+  {
     date: '2025-2026',
     org: 'Sports Committee\nBennett University',
     loc: 'Greater Noida, UP',
